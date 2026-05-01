@@ -1,0 +1,138 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - Salut
+    - Hello
+    - Bonjour
+    - Bonsoir
+    - Hey
+
+- regex: ask_human
+  examples: |
+    - (?i)parler.*conseill
+    - (?i)conseiller
+    - (?i)agent
+
+- intent: ask_human
+  examples: |
+    - Je veux parler à un conseiller
+    - Je veux parler à une personne
+    - Parle-moi à un humain
+    - Je veux parler à quelqu'un d'autre
+    - Passe-moi un agent
+    - Peux-tu me mettre en contact avec un conseiller ?
+    - Je voudrais parler à quelqu'un
+    - Pas satisfait
+    - Ce n'est pas la réponse que je cherchais
+    - Ça n'a pas répondu à ma question
+
+- intent: goodbye
+  examples: |
+    - Bonne journée
+    - Au revoir
+    - Bye
+    - Bonne soirée
+    - À plus tard
+
+- intent: affirm
+  examples: |
+    - Oui
+    - C'est ça
+    - Exactement
+    - Absolument
+    - Bien sûr
+
+- intent: deny
+  examples: |
+    - Non
+    - Pas du tout
+    - Pas vraiment
+    - Je ne pense pas
+    - Je ne crois pas
+
+- intent: mood_great
+  examples: |
+    - Bien
+    - Magnifique
+    - Très bien
+    - Super
+    - Fantastique
+    - Génial
+    - Ça va très bien
+    - Parfait
+
+- intent: mood_unhappy
+  examples: |
+    - Pas bien
+    - Triste
+    - Mal
+    - Terrible
+    - Horrible
+    - Ça ne va pas
+    - Très mal
+    - Pas terrible
+
+- intent: bot_challenge
+  examples: |
+    - T'es un humain ou un bot ?
+    - Es-tu un bot ?
+    - Es-tu une IA ?
+    - Es-tu un assistant virtuel ?
+    - Es-tu un chatbot ?
+    - Qui es-tu ?
+
+- intent: nlu_fallback
+  examples: |
+    - Tu pourras répondre à ma question ?
+    - Peux-tu m'aider avec ça ?
+    - Tu pourras me parler des cartes bancaires ?
+    - Qu'est-ce que les cartes bancaires ?
+    - Comment fonctionne les cartes bancaires ?
+    - Tu peux me donner des infos sur les cartes bancaires ?
+    - J'ai une question sur les cartes bancaires
+    - Je veux en savoir plus sur les cartes bancaires
+    - Tu peux m'expliquer les cartes bancaires ?
+
+- intent: ask_source
+  examples: |
+    - D'où vient cette information ?
+    - Quelle est la source ?
+    - Tu l'as trouvé où ?
+    - Quel document ?
+    - Source ?
+    - D'où tu sais ça ?
+    - Peux-tu me dire la source ?
+
+
+- intent: view_ticket
+  examples: |
+    - Voir mon ticket
+    - Où en est mon ticket ?
+    - J'aimerais voir le ticket
+    - Afficher le ticket
+    - Montre-moi le ticket
+    - Mon ticket
+
+- intent: inform
+  examples: |
+    - J'ai un problème de connexion
+    - Ma carte ne fonctionne pas
+    - Je veux annuler une transaction
+    - Mes coordonnées ont changé
+
+- intent: out_of_scope
+  examples: |
+    - Je veux une recette de cuisine
+    - Quel temps fait-il ?
+    - Combien font 2+2 ?
+
+- intent: inform_failure
+  examples: |
+    - Ce n'est pas utile
+    - Mauvaise réponse
+    - Tu n'as pas répondu à ma question
+    - C'est faux
+    - Nul
+    - Pas utile

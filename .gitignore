@@ -1,0 +1,24 @@
+# Python virtual environment
+.venv/
+__pycache__/
+*.py[cod]
+
+# Environment variables (Sensitive info!)
+.env
+
+# RAG specific: Ignore local docs or vector databases
+rag_engine/docs/
+*.pdf
+*.txt
+# If you use ChromaDB or FAISS locally:
+chroma_langchain_db/
+chroma.sqlite3
+
+conversation_logs/
+
+.rasa/
+models/
+rasa_env/
+rag_engine/Dockerfile
+docker-compose.yml
+rasa_bot/actions/Dockerfile

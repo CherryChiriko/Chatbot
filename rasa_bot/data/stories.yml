@@ -1,0 +1,53 @@
+version: "3.1"
+
+stories:
+
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+
+- story: goodbye path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: rag query
+  steps:
+  - intent: nlu_fallback
+  - action: action_query_rag
+
+- story: rag query and success
+  steps:
+  - intent: nlu_fallback
+  - action: action_query_rag
+  - intent: affirm
+  - action: utter_happy
+
+- story: rag query and user dissatisfied (Retry 1)
+  steps:
+  - intent: nlu_fallback
+  - action: action_query_rag
+  - intent: inform_failure
+  - action: action_handle_rag_failure
+
+- story: rag query and source explanation
+  steps:
+  - intent: nlu_fallback
+  - action: action_query_rag
+  - intent: ask_source
+  - action: action_explain_source
+
+- story: direct human request
+  steps:
+  - intent: ask_human
+  - action: action_transfer_to_human
+
+- story: view existing ticket
+  steps:
+  - intent: view_ticket
+  - action: action_view_ticket

@@ -1,0 +1,53 @@
+version: "3.1"
+
+rules:
+
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Say 'I am a bot' anytime the user challenges
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- rule: Ask for human agent - collect details
+  steps:
+  - intent: ask_human
+  - action: utter_ask_ticket_details
+
+- rule: User provides ticket details
+  condition:
+  - active_loop: null
+  steps:
+  - intent: inform
+  - action: action_transfer_to_human
+
+- rule: Use RAG for unknown questions
+  steps:
+  - intent: nlu_fallback
+  - action: action_query_rag
+
+- rule: Trigger Transfer Offer on multiple failures
+  condition:
+  - slot_was_set:
+    - rag_failure_count: 2
+  steps:
+  - action: utter_propose_transfert
+
+- rule: Handle Transfer Affirmation
+  steps:
+  - intent: affirm
+  - action: action_transfer_to_human
+
+- rule: Ask for source
+  steps:
+  - intent: ask_source
+  - action: action_explain_source
+
+- rule: View ticket
+  steps:
+  - intent: view_ticket
+  - action: action_view_ticket
+
