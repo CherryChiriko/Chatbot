@@ -6,13 +6,15 @@ import functools
 import logging
 import traceback
 from datetime import datetime
+import os
+import time 
 
-logger = logging.getLogger(__name__)
-
-CHROMA_DIR = "./chroma_langchain_db"
+# Defaults to your local relative path if no env var is found
+CHROMA_DIR = os.getenv("CHROMA_DB_PATH", "C:\\Users\\chiri\\Desktop\\Vector\\chroma_langchain_db")
 COLLECTION_NAME = "reference_docs"
 
 
+logger = logging.getLogger(__name__)
 
 # Add timeout handler for LLM calls
 def timeout_handler(signum, frame):
@@ -35,7 +37,8 @@ def with_timeout(seconds):
     return decorator
 
 embedding = OllamaEmbeddings(
-    model="mxbai-embed-large",
+    # model="mxbai-embed-large",
+    model = "all-minilm",
     base_url="http://localhost:11434" 
 )
 
@@ -45,10 +48,19 @@ vector_store = Chroma(
     embedding_function=embedding
 )
 
+
+# Temporary debug lines
+try:
+    count = vector_store._collection.count()
+    logger.info(f"🔍 ChromaDB connected. Total documents in collection: {count}")
+except Exception as e:
+    logger.error(f"❌ Could not connect to ChromaDB: {e}")
+
 model = OllamaLLM(
     model="llama3.2",
     base_url="http://localhost:11434"  
 )
+
 
 prompt = ChatPromptTemplate.from_template("""
 Tu es un assistant technique bancaire professionnel expert et chaleureux.
@@ -56,11 +68,10 @@ Tu es un assistant technique bancaire professionnel expert et chaleureux.
 RÈGLES :
 1. Réponds TOUJOURS en français.
 2. Utilise UNIQUEMENT le contexte fourni pour répondre.
-3. Si la réponse n'est pas dans le contexte, dis exactement : "Désolé, je ne trouve pas cette information dans ma documentation."
+3. Si le contexte ne contient ABSOLUMENT AUCUNE information pertinente, dis que tu ne sais pas. 
+   Sinon, synthétise ce que tu trouves de manière fluide.
 4. Si tu trouves une réponse partielle qui correspond à la question mais que tu détectes que l'utilisateur a posé plusieurs questions, réponds à la question partielle et indique que d'autres sujets sont en dehors de ton domaine. Exemple: "Je peux t'aider sur les cartes bancaires: [answer]. Cependant, les questions sur [l'autre sujet] sont en dehors de mon domaine."
-5. Si tu ne peux pas répondre à la question à cause d'un problème technique ou de complexité, propose de contacter un conseiller humain.
-6. Synthétise les informations de manière fluide. Ne fais pas de copier-coller brut.
-
+5. Ne commence pas ta phrase par "Désolé" si tu vas donner une explication juste après.
 Context:
 {context}
 
@@ -89,10 +100,19 @@ def save_to_log(session_id, question, answer, source):
         f.write(log_entry)
 
 def ask_rag(question: str, session_id: int) -> dict:
+    start_time = time.time()
+    # --- ADD THIS DEBUG BLOCK HERE ---
+    try:
+        count = vector_store._collection.count()
+        logger.info(f"📊 DATABASE CHECK: {count} chunks found in {COLLECTION_NAME}")
+    except Exception as e:
+        logger.error(f"❌ DATABASE ERROR: {str(e)}")
+    # ---------------------------------
+    
     try:
         # 1. Get the relevant documents 
         logger.info(f"Retrieving documents for: {question[:50]}...")
-        raw_docs = vector_store.similarity_search(question, k=4)
+        raw_docs = vector_store.similarity_search(question, k=2)
         
         # 2a. VERSION PRIORITIZATION LOGIC
         # We use a dictionary to keep the 'best' version of each chunk
@@ -136,6 +156,7 @@ def ask_rag(question: str, session_id: int) -> dict:
                 "source": None
             }
 
+        retrieval_done = time.time()
         # 6. Get the answer from the LLM with safety checks
         logger.info(f"Invoking LLM (context size: {len(context)} chars)...")
         answer = chain.invoke({
@@ -146,11 +167,15 @@ def ask_rag(question: str, session_id: int) -> dict:
         logger.info(f"Question: {question}  \nAnswer: {answer}  \nSources: {sources}")  # For debugging and monitoring
         save_to_log(session_id, question, answer, ", ".join(sources))
         
+        llm_done = time.time()
+        logger.info(f"⏱️ Retrieval: {retrieval_done - start_time:.2f}s | LLM: {llm_done - retrieval_done:.2f}s")
+        
         # 7. Return a dictionary so the Flask Bridge can pass it to Rasa
         return {
             "answer": answer,
             "source": ", ".join(sources)
         }
+
         
     except TimeoutError:
         logger.error("LLM timeout - question too complex or Ollama slow")

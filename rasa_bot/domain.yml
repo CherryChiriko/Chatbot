@@ -10,17 +10,13 @@ intents:
   - bot_challenge
   - nlu_fallback
   - ask_source
-  - ask_human
-  - view_ticket
   - inform
   - out_of_scope
   - inform_failure
 
 actions:
   - action_query_rag
-  - action_transfer_to_human
   - action_explain_source
-  - action_view_ticket
 
 
 responses:
@@ -34,15 +30,7 @@ responses:
   - text: "Au revoir"
 
   utter_iamabot:
-  - text: "Je suis Rasa."
-
-  utter_propose_transfert:
-  - text: "Souhaitez-vous parler à un conseiller ?"
-    buttons:
-    - title: "Oui, s'il vous plaît"
-      payload: "/affirm"
-    - title: "Non, ça ira"
-      payload: "/deny"
+  - text: "Je suis un bot."
 
   utter_cheer_up:
   - text: "Je suis désolé. Puis-je vous aider d'une autre manière?"
@@ -50,17 +38,6 @@ responses:
   utter_did_that_help:
   - text: "Est-ce que cela a aidé?"
 
-  utter_ticket_created:
-  - text: "Un ticket GLPI a été créé pour votre demande : {ticket_url}. Vous pouvez le consulter et le modifier si nécessaire."
-
-  utter_ask_ticket_details:
-  - text: "Pour que je puisse ouvrir un ticket, pourriez-vous décrire votre problème ou votre demande en quelques mots ?"
-
-  utter_no_ticket:
-  - text: "Je n'ai pas encore créé de ticket pour vous. Souhaitez-vous ouvrir un ticket ?"
-
-  utter_ticket_status:
-  - text: "Voici votre ticket : {ticket_url}"
 slots:
   last_source:
     type: text
@@ -74,16 +51,4 @@ slots:
     influence_conversation: false
     mappings:
       - type: custom
-
-  glpi_ticket_url:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: custom
-
-  ticket_details:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_text
 
