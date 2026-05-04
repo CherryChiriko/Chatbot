@@ -2,6 +2,11 @@ version: "3.1"
 
 rules:
 
+- rule: Say hello anytime the user says hello
+  steps:
+  - intent: greet
+  - action: utter_greet
+  
 - rule: Say goodbye anytime the user says goodbye
   steps:
   - intent: goodbye
@@ -12,10 +17,10 @@ rules:
   - intent: bot_challenge
   - action: utter_iamabot
 
-- rule: Ask for human agent - collect details
-  steps:
-  - intent: ask_human
-  - action: utter_ask_ticket_details
+#- rule: Ask for human agent - collect details
+#  steps:
+#  - intent: ask_human
+#  - action: utter_ask_ticket_details
 
 - rule: User provides ticket details
   condition:
@@ -36,10 +41,10 @@ rules:
   steps:
   - action: utter_propose_transfert
 
-- rule: Handle Transfer Affirmation
-  steps:
-  - intent: affirm
-  - action: action_transfer_to_human
+#- rule: Handle Transfer Affirmation
+#  steps:
+#  - intent: affirm
+#  - action: action_transfer_to_human
 
 - rule: Ask for source
   steps:
